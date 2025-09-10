@@ -4,9 +4,9 @@ This document details how Linear Programming (LP) can be formulated and applied 
 
 ## Overview
 
-Linear Programming offers a mathematically principled approach to SCSP by formulating the decision problem as an optimization problem with linear constraints. While SCSP is inherently dynamic and stochastic, LP techniques can be adapted through approximation methods, lookahead strategies, and expected value formulations.
+Linear Programming offers a mathematically principled approach to SCSP by formulating the decision problem as an optimization problem with linear constraints. While SCSP is dynamic and stochastic, LP techniques can be adapted through approximation methods, lookahead strategies, and expected value formulations.
 
-## Core LP Formulation for SCSP
+## LP Formulation
 
 ### Decision Variables
 
@@ -43,7 +43,7 @@ $$x_t \in \{0, 1\} \quad \forall t$$
 
 The fundamental challenge is that future entities $\{e_{t+1}, e_{t+2}, ..., e_T\}$ are unknown when making decision $x_t$.
 
-### Solution Approaches
+### Solution
 
 #### 1. Expected Value Formulation
 
@@ -213,7 +213,7 @@ Where $\text{deficit}_j = \max(0, \theta_j \cdot n_t - c_j^{(t)})$ is the curren
 $$x_t \in \{0, 1\} \quad \text{(admit patient t)}$$
 
 **Objective:**
-$$\max \sum_{t=1}^{200} x_t \cdot \text{patient_utility}_t - \text{constraint_penalties}$$
+$$\max \sum_{t=1}^{200} x_t \cdot \text{patient\_utility}_t - \text{constraint\_penalties}$$
 
 **Constraints:**
 $$\begin{align}
@@ -221,14 +221,6 @@ $$\begin{align}
 \sum_{t=1}^{200} x_t \cdot \text{critical}_t &\geq 0.6 \cdot \sum_{t=1}^{200} x_t \\
 \sum_{t=1}^{200} x_t \cdot \text{elderly}_t &\geq 0.4 \cdot \sum_{t=1}^{200} x_t
 \end{align}$$
-
-### Implementation Results
-
-**Performance Metrics:**
-- **Success Rate**: 85% (compared to 60% for greedy)
-- **Capacity Utilization**: 98% (vs. 75% for random)
-- **Constraint Satisfaction**: 95% (vs. 70% for simple heuristics)
-- **Decision Time**: 10ms per patient (acceptable for real-time)
 
 ## Advanced Extensions
 
@@ -247,32 +239,10 @@ $$\max \min_{\text{scenario}} \text{Objective}(\text{scenario})$$
 Probabilistic constraint satisfaction:
 $$P(\text{Constraint satisfied}) \geq 1 - \alpha$$
 
-## Implementation Guidelines
-
-### Software Requirements
+## Software Available
 - **LP Solver**: CPLEX, Gurobi, or open-source COIN-OR
 - **Python Libraries**: `pulp`, `scipy.optimize`, or `cvxpy`
 - **Performance**: Vectorized operations with NumPy
-
-### Code Structure
-```python
-class LinearProgrammingStrategy:
-    def __init__(self, config: LPStrategyConfig):
-        self.config = config
-        self.solver = self._initialize_solver()
-    
-    def decide(self, entity, state, constraints):
-        # 1. Formulate LP problem
-        # 2. Solve optimization
-        # 3. Return binary decision
-        pass
-```
-
-### Testing and Validation
-1. **Unit Tests**: Verify LP formulation correctness
-2. **Integration Tests**: End-to-end simulation testing
-3. **Benchmark Tests**: Compare against known optimal solutions
-4. **Performance Tests**: Measure solving time and memory usage
 
 ## Conclusion
 
@@ -304,10 +274,3 @@ For problems requiring more sophisticated uncertainty handling or online learnin
 ### Online and Dynamic Programming
 - **Powell, W. B. (2007).** *Approximate Dynamic Programming: Solving the Curses of Dimensionality*. John Wiley & Sons.
   - *Chapter 12*: Linear programming and approximate dynamic programming
-
-### Applications and Case Studies
-- **Righter, R. (1989).** "A resource allocation problem in a random environment." *Operations Research*, 37(3), 329-338.
-  - Classic paper on stochastic resource allocation
-
-- **Ata, B., & Shneorson, S. (2006).** "Dynamic control of an M/M/1 service system with adjustable arrival and service rates." *Management Science*, 52(11), 1778-1791.
-  - Applications to service systems with capacity constraints
