@@ -11,6 +11,8 @@ Stochastic constraint satisfaction problems involve:
 - Optimization of objective functions while meeting all constraints
 - Constrained Markov Decision Process
 
+For a comprehensive mathematical foundation and theoretical background, see [`MATHEMATICAL_FOUNDATION.md`](MATHEMATICAL_FOUNDATION.md).
+
 ## Example Problems
 
 The repository includes various example problems:
