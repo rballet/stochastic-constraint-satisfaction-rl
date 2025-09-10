@@ -1,0 +1,166 @@
+# Cursor Rules for Stochastic Constraint Satisfaction RL Project
+
+## Code Quality & Architecture
+
+### SOLID Principles
+- Apply SOLID principles rigorously, especially Single Responsibility and Dependency Inversion
+- Use dependency injection instead of tight coupling
+- Prefer composition over inheritance
+- Create abstractions (protocols/interfaces) for key dependencies
+- Make classes immutable when possible (frozen dataclasses)
+
+### Clean Architecture
+- Separate concerns clearly (e.g., environment config vs reward config vs scenario definitions)
+- Avoid duplication - identify single sources of truth
+- Use factory patterns for complex object creation
+- Keep configuration separate from business logic
+
+### Configuration Management
+- Make hardcoded values configurable through dedicated config classes
+- Use immutable configuration objects (frozen dataclasses)
+- Provide simple factory functions for common configurations
+- Avoid backward compatibility unless explicitly requested
+- Keep scenario parameters in scenario files, not config files
+
+## Code Organization
+
+### File Structure
+- Place test files in `tests/` directory, never in project root
+- Remove temporary/test scripts after use to avoid clutter
+- Use descriptive file names following project conventions
+- Keep related functionality together in appropriate modules
+
+### Import Management
+- Fix import errors immediately when they occur
+- Keep `__all__` exports synchronized with actual available classes
+- Remove unused imports and exports
+
+## Development Practices
+
+### Documentation & Communication
+- Be concise in explanations - avoid verbose descriptions
+- Don't create example files unless explicitly requested
+- Avoid unnecessary changes to markdown files
+- Focus on code functionality over documentation
+
+### Error Handling
+- Fix linting errors as they appear
+- Test code changes immediately after implementation
+- Use proper error messages and type hints
+- Handle edge cases appropriately
+
+### Testing
+- Create comprehensive test suites in proper locations
+- Test configuration systems thoroughly
+- Include tests for immutability and validation
+- Test both happy path and error conditions
+
+## Project-Specific Guidelines
+
+### Stochastic CSP Framework
+- Understand the core abstractions: Entity, Constraint, Scenario, Strategy
+- Respect the simulation engine patterns
+- Use the AbstractStrategy base class for strategy implementations
+- Follow the established patterns for entity generation
+
+### ICU Hospital Example
+- Scenarios define medical parameters (patient attributes, constraints, probabilities)
+- Environment configs define operational parameters (capacity, limits, rewards)
+- Keep these concerns separate - no duplication between config and scenarios
+- Use the established EnvironmentConfig and RewardConfig pattern
+
+### Simulation & RL Integration
+- Follow Gymnasium interface patterns for RL environments
+- Use proper seed management for reproducibility
+- Implement proper reset/step methods
+- Include comprehensive observation spaces
+
+## Code Style
+
+### Python Best Practices
+- Use type hints consistently
+- Prefer dataclasses for data structures
+- Use protocols for interfaces
+- Follow PEP 8 naming conventions
+- Use context managers where appropriate
+
+### Functional Programming
+- Prefer pure functions when possible
+- Avoid side effects in configuration objects
+- Use immutable data structures
+- Minimize global state
+
+## Performance & Scalability
+
+### Efficient Implementation
+- Use appropriate data structures
+- Avoid premature optimization but consider performance
+- Use vectorized operations where applicable
+- Consider memory usage for large simulations
+
+### Parallel Execution
+- Support parallel simulation runs
+- Use appropriate random seeding for reproducibility
+- Handle concurrent access patterns properly
+
+## Debugging & Maintenance
+
+### Troubleshooting
+- Include proper logging where needed
+- Provide clear error messages
+- Make debugging information accessible
+- Use meaningful variable names
+
+### Maintainability
+- Write self-documenting code
+- Keep functions focused and small
+- Use meaningful abstractions
+- Avoid magic numbers and strings
+
+## Specific Project Patterns
+
+### Strategy Implementation
+- Inherit from AbstractStrategy
+- Implement _decide_impl() method (not decide())
+- Implement _reset_internal_state() for state management
+- Let base class handle optimization automatically
+
+### Configuration Creation
+- Use factory functions like create_config()
+- Support both default and custom configurations
+- Make configurations immutable
+- Separate environment from reward configuration
+
+### Simulation Execution
+- Use SimulationEngine for running strategies
+- Support both single and multiple simulation runs
+- Use proper entity generators (basic, correlated, multivariate)
+- Include constraint satisfaction tracking
+
+## Code Review Checklist
+
+Before submitting code changes, verify:
+- [ ] No hardcoded values (use configuration)
+- [ ] No test files in project root
+- [ ] SOLID principles applied
+- [ ] No configuration duplication
+- [ ] Proper separation of concerns
+- [ ] All imports work correctly
+- [ ] Tests pass
+- [ ] Code is concise and focused
+- [ ] No unnecessary documentation changes
+- [ ] Immutable configurations used
+- [ ] Type hints included
+
+## Anti-Patterns to Avoid
+
+- Don't create example files unless requested
+- Don't update documentation unnecessarily
+- Don't maintain backward compatibility unless asked
+- Don't duplicate configuration parameters
+- Don't put test scripts in project root
+- Don't create verbose explanations
+- Don't ignore linting errors
+- Don't mix scenario parameters with environment config
+- Don't create mutable configuration objects
+- Don't violate single responsibility principle

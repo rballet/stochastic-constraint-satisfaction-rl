@@ -3,7 +3,7 @@
 from .engine import SimulationEngine, DetailedSimulationEngine
 from .entity_generator import (
     BasicEntityGenerator, CorrelatedEntityGenerator, 
-    MultivariateEntityGenerator, RealisticEntityGenerator,
+    MultivariateEntityGenerator,
     create_entity_generator
 )
 from .monte_carlo import (
@@ -14,7 +14,7 @@ from .monte_carlo import (
 __all__ = [
     "SimulationEngine", "DetailedSimulationEngine",
     "BasicEntityGenerator", "CorrelatedEntityGenerator", 
-    "MultivariateEntityGenerator", "RealisticEntityGenerator",
+    "MultivariateEntityGenerator",
     "create_entity_generator",
     "MonteCarloSimulator", "MonteCarloConfig", "StrategyPerformance",
     "MonteCarloResults", "run_quick_comparison", "create_default_config"
