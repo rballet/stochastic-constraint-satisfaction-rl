@@ -196,7 +196,6 @@ outputs/
 *.tmp
 *.temp
 temp_*
-test_*.py
 debug_*.py
 
 # Data files
