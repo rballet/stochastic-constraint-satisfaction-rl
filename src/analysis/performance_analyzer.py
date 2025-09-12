@@ -65,10 +65,6 @@ class PerformanceMetrics:
 
 class PerformanceAnalyzer:
     """Comprehensive performance analysis for strategies."""
-    
-    def __init__(self, capacity: int = 1000, max_rejections: int = 2000):
-        self.capacity = capacity
-        self.max_rejections = max_rejections
         
     def analyze_strategy(
         self,
@@ -100,7 +96,11 @@ class PerformanceAnalyzer:
             
             entity_generator = create_entity_generator(entity_generator_type, seed=seed)
             engine = SimulationEngine(entity_generator)
-            result = engine.run_simulation(scenario, strategy, seed=seed)
+            result = engine.run_simulation(
+                scenario=scenario, 
+                strategy=strategy, 
+                seed=seed
+            )
             
             runtime = time.time() - start_time
             
@@ -141,8 +141,8 @@ class PerformanceAnalyzer:
         acceptance_rate = total_accepted / total_processed_sum if total_processed_sum > 0 else 0
         
         # Capacity utilization
-        capacity_utilization = avg_accepted / self.capacity
-        capacity_utilization_std = std_accepted / self.capacity
+        capacity_utilization = avg_accepted / scenario.capacity
+        capacity_utilization_std = std_accepted / scenario.capacity
         
         # Statistical metrics
         median_accepted = np.median(accepted_counts)
@@ -314,11 +314,15 @@ class PerformanceReporter:
     def create_detailed_constraint_table(self, metrics_list: List[PerformanceMetrics]):
         """Create detailed constraint satisfaction table."""
         
-        print("\n* DETAILED CONSTRAINT ANALYSIS")
+        print("\n* CONSTRAINT ANALYSIS")
         print("-" * 80)
         
         for metrics in metrics_list:
             print(f"\n{metrics.strategy_name} ({metrics.scenario_name}):")
+            accepted = metrics.avg_accepted
+            rejected = metrics.avg_rejected
+            total = accepted + rejected
+            print(f"  Accepted: {accepted:.0f}, Rejected: {rejected:.0f}, Total: {total:.0f}")
             for attr, constraint_data in metrics.constraint_metrics.items():
                 required = constraint_data['required_percentage']
                 achieved = constraint_data['avg_achieved_percentage']

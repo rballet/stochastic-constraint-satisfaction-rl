@@ -40,18 +40,36 @@ class Constraint:
 
 
 @dataclass
+class Scenario:
+    """Represents a problem scenario."""
+    name: str
+    attributes: List[str]
+    constraints: List[Constraint]
+    attribute_probabilities: Dict[str, float]
+    capacity: int
+    max_rejections: int
+    attribute_correlations: Dict[tuple, float] = field(default_factory=dict)
+    description: str = ""
+
+
+@dataclass
 class ProblemState:
     """Current state of the constraint satisfaction problem."""
     accepted_count: int = 0
     rejected_count: int = 0
-    attribute_counts: Dict[str, int] = None
-    capacity: int = 1000
-    max_rejections: int = 20000
-    
-    def __post_init__(self):
-        if self.attribute_counts is None:
-            self.attribute_counts = {}
-    
+    attribute_counts: Dict[str, int] = field(default_factory=dict)
+    scenario: Scenario = field(default_factory=Scenario)
+
+    @property
+    def capacity(self) -> int:
+        """Get capacity from scenario."""
+        return self.scenario.capacity
+
+    @property
+    def max_rejections(self) -> int:
+        """Get max rejections from scenario."""
+        return self.scenario.max_rejections
+
     def is_full(self) -> bool:
         """Check if capacity is reached."""
         return self.accepted_count >= self.capacity
@@ -70,20 +88,13 @@ class ProblemState:
             return 0.0
         return self.attribute_counts.get(attribute, 0) / self.accepted_count
 
+    def is_satisfied(self) -> bool:
+        """Check if all constraints are satisfied."""
+        return all(self.get_attribute_percentage(c.attribute) >= c.min_percentage for c in self.scenario.constraints)
 
-@dataclass
-class Scenario:
-    """Represents a problem scenario."""
-    name: str
-    attributes: List[str]
-    constraints: List[Constraint]
-    attribute_probabilities: Dict[str, float]
-    attribute_correlations: Dict[tuple, float] = None
-    description: str = ""
-    
-    def __post_init__(self):
-        if self.attribute_correlations is None:
-            self.attribute_correlations = {}
+    def is_success(self) -> bool:
+        """Check if problem is successful."""
+        return self.is_satisfied() and self.is_full()
 
 
 @dataclass
@@ -95,17 +106,13 @@ class SimulationResult:
     rejected_count: int
     constraints_satisfied: bool
     final_attribute_percentages: Dict[str, float]
-    decision_log: List[Dict[str, Any]] = None
+    decision_log: List[Dict[str, Any]] = field(default_factory=list)
     success: bool = False
     # Empirical arrival statistics for generated entities (independent of decisions)
     arrival_total: int = 0
     arrival_attribute_counts: Dict[str, int] = field(default_factory=dict)
     arrival_pair_counts: Dict[str, Dict[str, int]] = field(default_factory=dict)
-    
-    def __post_init__(self):
-        if self.decision_log is None:
-            self.decision_log = []
-        self.success = self.accepted_count >= 1000 and self.constraints_satisfied
+
 
 
 class Strategy(Protocol):
@@ -164,12 +171,12 @@ class ConstraintStatus:
         # Calculate entities needed to satisfy constraint
         entities_needed = 0
         if not is_satisfied:
-            total_needed = constraint.min_percentage * state.capacity
+            total_needed = constraint.min_percentage * state.capacity()
             current_count = state.attribute_counts.get(constraint.attribute, 0)
             entities_needed = max(0, int(total_needed - current_count))
         
         # Calculate urgency (higher = more urgent)
-        remaining_capacity = state.capacity - state.accepted_count
+        remaining_capacity = state.capacity() - state.accepted_count
         urgency_score = 0.0
         if remaining_capacity > 0 and entities_needed > 0:
             urgency_score = entities_needed / remaining_capacity

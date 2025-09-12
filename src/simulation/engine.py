@@ -30,8 +30,7 @@ class SimulationEngine:
         strategy.reset()
         self.entity_generator.reset(seed)
         
-        # Initialize state
-        problem_state = ProblemState()
+        problem_state = ProblemState(scenario=scenario)
         decision_log = [] if log_decisions else None
         entity_count = 0
         # Track empirical arrival stats irrespective of decisions
@@ -93,7 +92,7 @@ class SimulationEngine:
                 break
         
         # Calculate final results
-        constraints_satisfied = self._check_all_constraints_satisfied(scenario.constraints, problem_state)
+        constraints_satisfied = problem_state.is_satisfied()
         final_percentages = {
             attr: problem_state.get_attribute_percentage(attr) 
             for attr in scenario.attributes
@@ -104,8 +103,9 @@ class SimulationEngine:
             strategy_name=strategy.name,
             accepted_count=problem_state.accepted_count,
             rejected_count=problem_state.rejected_count,
-            constraints_satisfied=constraints_satisfied,
+            constraints_satisfied=problem_state.is_satisfied(),
             final_attribute_percentages=final_percentages,
+            success=problem_state.is_success(),
             decision_log=decision_log,
             arrival_total=arrival_total,
             arrival_attribute_counts=arrival_attr_counts,
@@ -140,20 +140,6 @@ class SimulationEngine:
             results.append(result)
         
         return results
-    
-    def _check_all_constraints_satisfied(
-        self, 
-        constraints: List, 
-        problem_state: ProblemState
-    ) -> bool:
-        """Check if all constraints are satisfied."""
-        for constraint in constraints:
-            if not constraint.is_satisfied(
-                problem_state.accepted_count,
-                problem_state.attribute_counts.get(constraint.attribute, 0)
-            ):
-                return False
-        return True
     
     def get_constraint_status(
         self, 
@@ -249,7 +235,7 @@ class DetailedSimulationEngine(SimulationEngine):
                 callback(entity, decision, problem_state, constraint_status)
         
         # Build result
-        constraints_satisfied = self._check_all_constraints_satisfied(scenario.constraints, problem_state)
+        constraints_satisfied = problem_state.is_satisfied()
         final_percentages = {
             attr: problem_state.get_attribute_percentage(attr) 
             for attr in scenario.attributes
@@ -262,5 +248,6 @@ class DetailedSimulationEngine(SimulationEngine):
             rejected_count=problem_state.rejected_count,
             constraints_satisfied=constraints_satisfied,
             final_attribute_percentages=final_percentages,
-            decision_log=decision_log
+            decision_log=decision_log,
+            success=problem_state.is_success()
         )

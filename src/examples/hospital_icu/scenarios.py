@@ -21,6 +21,8 @@ def create_icu_scenario_1() -> Scenario:
         name="icu_standard",
         description="Standard ICU operating conditions",
         attributes=["critical_condition", "elderly", "has_insurance", "high_risk", "emergency_case"],
+        capacity=ICU_CAPACITY,
+        max_rejections=ICU_MAX_REJECTIONS,
         constraints=[
             Constraint(
                 attribute="critical_condition", 
@@ -65,6 +67,8 @@ def create_icu_scenario_2() -> Scenario:
         name="icu_high_acuity",
         description="High-acuity period (flu season/health crisis)",
         attributes=["critical_condition", "elderly", "has_insurance", "high_risk", "emergency_case"],
+        capacity=ICU_CAPACITY,
+        max_rejections=ICU_MAX_REJECTIONS,
         constraints=[
             Constraint(
                 attribute="critical_condition", 
@@ -110,6 +114,8 @@ def create_icu_scenario_3() -> Scenario:
         name="icu_emergency_surge",
         description="Emergency surge conditions (disaster/epidemic)",
         attributes=["critical_condition", "elderly", "has_insurance", "high_risk", "emergency_case"],
+        capacity=ICU_CAPACITY,
+        max_rejections=ICU_MAX_REJECTIONS,
         constraints=[
             Constraint(
                 attribute="critical_condition", 
