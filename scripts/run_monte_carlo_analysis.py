@@ -123,7 +123,7 @@ def run_full_analysis(num_runs: int = 100, save_results: bool = True):
                   f"Runtime: {metrics.avg_runtime_seconds*1000:.1f}ms")
     
     print("\n" + "="*80)
-    print("📈 GENERATING COMPREHENSIVE REPORT")
+    print("* GENERATING REPORT")
     print("="*80)
     
     # Generate comprehensive report
@@ -139,14 +139,13 @@ def run_full_analysis(num_runs: int = 100, save_results: bool = True):
 def save_detailed_results(metrics_list, reporter):
     """Save detailed results to files."""
     
-    print(f"\n💾 Results would be saved here (CSV export disabled for now)")
-    print("   - Enable pandas dependency to save CSV files")
+    print(f"\nResults would be saved here (CSV export disabled for now)")
 
 
 def run_quick_analysis(num_runs: int = 20):
     """Run quick analysis for testing."""
     
-    print("⚡ Running Quick Analysis")
+    print("Running Quick Analysis")
     print("="*50)
     
     scenario = create_icu_scenario_1()

@@ -47,7 +47,6 @@ class AbstractStrategy(ABC):
         """
         # If all constraints are satisfied, accept everyone remaining
         if self.should_accept_all_remaining(problem_state, constraints):
-            print(f"{self.name.upper()}: All constraints satisfied!")
             return Decision.ACCEPT
         
         # Otherwise delegate to strategy-specific logic

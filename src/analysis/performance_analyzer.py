@@ -92,7 +92,7 @@ class PerformanceAnalyzer:
         print(f"Analyzing {strategy.name} on {scenario.name} ({num_runs} runs)...")
         
         for i, seed in enumerate(seeds):
-            if i % 20 == 0:
+            if i % 10 == 0:
                 print(f"  Progress: {i}/{num_runs}")
             
             # Run simulation with timing
@@ -314,7 +314,7 @@ class PerformanceReporter:
     def create_detailed_constraint_table(self, metrics_list: List[PerformanceMetrics]):
         """Create detailed constraint satisfaction table."""
         
-        print("\n🎯 DETAILED CONSTRAINT ANALYSIS")
+        print("\n* DETAILED CONSTRAINT ANALYSIS")
         print("-" * 80)
         
         for metrics in metrics_list:
@@ -337,7 +337,7 @@ class PerformanceReporter:
     def create_statistical_summary(self, metrics_list: List[PerformanceMetrics]):
         """Create statistical summary with confidence intervals."""
         
-        print("\n📈 STATISTICAL ANALYSIS")
+        print("\n* STATISTICAL ANALYSIS")
         print("-" * 80)
         print(f"{'Strategy':<20} {'Scenario':<15} {'Success Rate (95% CI)':<25} {'Accepted (95% CI)':<20} {'CV':<8}")
         print("-" * 80)
@@ -359,7 +359,7 @@ class PerformanceReporter:
         """Print a comprehensive performance report."""
         
         print("="*80)
-        print("COMPREHENSIVE STRATEGY PERFORMANCE ANALYSIS")
+        print("* STRATEGY PERFORMANCE ANALYSIS")
         print("="*80)
         
         # Summary table
@@ -372,7 +372,7 @@ class PerformanceReporter:
         self.create_detailed_constraint_table(metrics_list)
         
         # Performance insights
-        print("\n💡 PERFORMANCE INSIGHTS")
+        print("\n* PERFORMANCE INSIGHTS")
         print("-" * 50)
         self._print_insights(metrics_list)
     
@@ -384,29 +384,16 @@ class PerformanceReporter:
         best_efficiency = max(metrics_list, key=lambda m: m.rejection_efficiency)
         best_utilization = max(metrics_list, key=lambda m: m.capacity_utilization)
         
-        print(f"🏆 Highest Success Rate: {best_success.strategy_name} ({best_success.success_rate:.1%})")
-        print(f"⚡ Most Efficient Rejections: {best_efficiency.strategy_name} ({best_efficiency.rejection_efficiency:.2f})")
-        print(f"📈 Best Capacity Utilization: {best_utilization.strategy_name} ({best_utilization.capacity_utilization:.1%})")
+        print(f"Highest Success Rate: {best_success.strategy_name} ({best_success.success_rate:.1%})")
+        print(f"Most Efficient Rejections: {best_efficiency.strategy_name} ({best_efficiency.rejection_efficiency:.2f})")
+        print(f"Best Capacity Utilization: {best_utilization.strategy_name} ({best_utilization.capacity_utilization:.1%})")
         
         # Consistency analysis
         most_consistent = min(metrics_list, key=lambda m: m.std_accepted / m.avg_accepted if m.avg_accepted > 0 else float('inf'))
-        print(f"🎯 Most Consistent: {most_consistent.strategy_name} (CV: {most_consistent.std_accepted/most_consistent.avg_accepted:.2f})")
+        print(f"Most Consistent: {most_consistent.strategy_name} (CV: {most_consistent.std_accepted/most_consistent.avg_accepted:.2f})")
         
         # Speed analysis
         fastest = min(metrics_list, key=lambda m: m.avg_runtime_seconds)
-        print(f"🚀 Fastest Runtime: {fastest.strategy_name} ({fastest.avg_runtime_seconds*1000:.1f}ms avg)")
-        
-        print("\n📋 RECOMMENDATIONS:")
-        
-        # Recommendations based on metrics
-        if best_success.success_rate > 0.9:
-            print(f"✅ {best_success.strategy_name} shows excellent reliability for production use")
-        
-        if best_efficiency.rejection_efficiency > 2.0:
-            print(f"✅ {best_efficiency.strategy_name} efficiently uses rejections to meet constraints")
-        
-        if any(m.constraint_satisfaction_rate < 0.8 for m in metrics_list):
-            struggling_strategies = [m.strategy_name for m in metrics_list if m.constraint_satisfaction_rate < 0.8]
-            print(f"⚠️  Strategies needing constraint improvement: {', '.join(struggling_strategies)}")
+        print(f"Fastest Runtime: {fastest.strategy_name} ({fastest.avg_runtime_seconds*1000:.1f}ms avg)")
         
         print("="*80)
