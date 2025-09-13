@@ -6,8 +6,8 @@ from ...core.types import Scenario, Constraint
 
 
 # Constants for scenarios
-ICU_CAPACITY = 100
-ICU_MAX_REJECTIONS = 1000
+ICU_CAPACITY = 1000
+ICU_MAX_REJECTIONS = 20000
 
 
 def create_icu_scenario_1() -> Scenario:
@@ -151,10 +151,76 @@ def create_icu_scenario_3() -> Scenario:
     )
 
 
+def create_icu_scenario_4() -> Scenario:
+    """
+    Scenario 4: Challenging Negative Correlations
+    
+    Highly challenging scenario with strong negative correlations between attributes.
+    Based on complex patient demographics where attributes compete against each other.
+    This scenario tests strategies under adversarial correlation patterns.
+    
+    Note: The negative correlations represent a challenging theoretical scenario
+    where the constraint requirements conflict with natural patient demographics.
+    """
+    return Scenario(
+        name="icu_negative_correlations",
+        description="Challenging scenario with strong negative correlations",
+        attributes=["critical_condition", "elderly", "has_insurance", "high_risk", "emergency_case"],
+        capacity=ICU_CAPACITY,
+        max_rejections=ICU_MAX_REJECTIONS,
+        constraints=[
+            Constraint(
+                attribute="critical_condition", 
+                min_percentage=0.65,  # 65% critical - higher than baseline frequencies
+                description="At least 65% critical patients"
+            ),
+            Constraint(
+                attribute="elderly", 
+                min_percentage=0.45,  # 45% elderly - challenging given negative correlation with critical
+                description="At least 45% elderly patients"
+            ),
+            Constraint(
+                attribute="has_insurance", 
+                min_percentage=0.30,  # 30% insured - much lower than typical, but achievable
+                description="At least 30% insured patients"
+            ),
+            Constraint(
+                attribute="high_risk", 
+                min_percentage=0.75,  # 75% high-risk - very challenging given low base frequency
+                description="At least 75% high-risk patients"
+            ),
+        ],
+        attribute_probabilities={
+            # Based on relativeFrequencies from the example
+            "critical_condition": 0.6265,
+            "elderly": 0.47,             
+            "has_insurance": 0.06227,    
+            "high_risk": 0.398,          
+            "emergency_case": 0.35,      
+        },
+        attribute_correlations={
+            # Strong negative correlations that make constraint satisfaction very difficult
+            # Note: These represent a challenging theoretical scenario where demographics conflict
+            ("critical_condition", "elderly"): -0.469616933267432,        # Strong negative - theoretical challenge
+            ("critical_condition", "high_risk"): -0.654940381560618,      # Very strong negative - theoretical challenge
+            ("elderly", "has_insurance"): 0.141972591404715,              # Weak positive
+            ("elderly", "high_risk"): 0.572406780843645,                  # Strong positive
+            ("has_insurance", "high_risk"): 0.144464595056508,            # Weak positive
+            ("critical_condition", "has_insurance"): 0.0946331703989159,  # Very weak positive
+            
+            # Additional challenging correlations
+            ("emergency_case", "critical_condition"): -0.1,               
+            ("emergency_case", "elderly"): 0.1,                         
+            ("emergency_case", "has_insurance"): -0.2,                    
+        }
+    )
+
+
 def get_all_icu_scenarios():
     """Get all ICU scenarios for comparison studies."""
     return [
         create_icu_scenario_1(),
         create_icu_scenario_2(),
         create_icu_scenario_3(),
+        create_icu_scenario_4(),
     ]
