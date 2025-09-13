@@ -290,26 +290,64 @@ class PerformanceReporter:
     def create_summary_table(self, metrics_list: List[PerformanceMetrics]):
         """Create a summary table of key metrics."""
         
-        print("="*120)
-        print("STRATEGY PERFORMANCE SUMMARY")
-        print("="*120)
+        # Define column widths for consistent formatting
+        col_widths = {
+            'strategy': 20,
+            'scenario': 15,
+            'success': 10,
+            'constraints': 12,
+            'avg_accept': 15,
+            'accept_rate': 12,
+            'efficiency': 12,
+            'runtime': 12,
+            'runs': 6
+        }
         
-        header = f"{'Strategy':<20} {'Scenario':<15} {'Success':<8} {'Constraints':<12} {'Avg Accept':<12} {'Accept Rate':<12} {'Efficiency':<12} {'Runtime(ms)':<12} {'Runs':<6}"
-        print(header)
-        print("-"*120)
+        # Calculate total width
+        total_width = sum(col_widths.values()) + len(col_widths) - 1
         
+        # Header
+        print("=" * total_width)
+        print("STRATEGY PERFORMANCE SUMMARY".center(total_width))
+        print("=" * total_width)
+        
+        # Column headers
+        header_parts = [
+            f"{'Strategy':<{col_widths['strategy']}}",
+            f"{'Scenario':<{col_widths['scenario']}}",
+            f"{'Success':<{col_widths['success']}}",
+            f"{'Constraints':<{col_widths['constraints']}}",
+            f"{'Avg Accept':<{col_widths['avg_accept']}}",
+            f"{'Accept Rate':<{col_widths['accept_rate']}}",
+            f"{'Efficiency':<{col_widths['efficiency']}}",
+            f"{'Runtime(ms)':<{col_widths['runtime']}}",
+            f"{'Runs':<{col_widths['runs']}}"
+        ]
+        print(" ".join(header_parts))
+        print("-" * total_width)
+        
+        # Data rows
         for metrics in metrics_list:
-            print(f"{metrics.strategy_name:<20} "
-                  f"{metrics.scenario_name:<15} "
-                  f"{metrics.success_rate:.1%}    "
-                  f"{metrics.constraint_satisfaction_rate:.1%}        "
-                  f"{metrics.avg_accepted:.0f}±{metrics.std_accepted:.0f}    "
-                  f"{metrics.acceptance_rate:.1%}        "
-                  f"{metrics.rejection_efficiency:.2f}         "
-                  f"{metrics.avg_runtime_seconds*1000:.1f}         "
-                  f"{metrics.num_runs}")
+            # Format values with proper padding
+            strategy_str = f"{metrics.strategy_name:<{col_widths['strategy']}}"
+            scenario_str = f"{metrics.scenario_name:<{col_widths['scenario']}}"
+            success_str = f"{metrics.success_rate:.1%}"
+            success_padded = f"{success_str:<{col_widths['success']}}"
+            constraints_str = f"{metrics.constraint_satisfaction_rate:.1%}"
+            constraints_padded = f"{constraints_str:<{col_widths['constraints']}}"
+            accept_str = f"{metrics.avg_accepted:.0f}±{metrics.std_accepted:.0f}"
+            accept_padded = f"{accept_str:<{col_widths['avg_accept']}}"
+            accept_rate_str = f"{metrics.acceptance_rate:.1%}"
+            accept_rate_padded = f"{accept_rate_str:<{col_widths['accept_rate']}}"
+            efficiency_str = f"{metrics.rejection_efficiency:.2f}"
+            efficiency_padded = f"{efficiency_str:<{col_widths['efficiency']}}"
+            runtime_str = f"{metrics.avg_runtime_seconds*1000:.1f}"
+            runtime_padded = f"{runtime_str:<{col_widths['runtime']}}"
+            runs_str = f"{metrics.num_runs:<{col_widths['runs']}}"
+            
+            print(f"{strategy_str} {scenario_str} {success_padded} {constraints_padded} {accept_padded} {accept_rate_padded} {efficiency_padded} {runtime_padded} {runs_str}")
         
-        print("-"*120)
+        print("-" * total_width)
     
     def create_detailed_constraint_table(self, metrics_list: List[PerformanceMetrics]):
         """Create detailed constraint satisfaction table."""
@@ -341,23 +379,48 @@ class PerformanceReporter:
     def create_statistical_summary(self, metrics_list: List[PerformanceMetrics]):
         """Create statistical summary with confidence intervals."""
         
-        print("\n* STATISTICAL ANALYSIS")
-        print("-" * 80)
-        print(f"{'Strategy':<20} {'Scenario':<15} {'Success Rate (95% CI)':<25} {'Accepted (95% CI)':<20} {'CV':<8}")
-        print("-" * 80)
+        # Define column widths
+        col_widths = {
+            'strategy': 20,
+            'scenario': 15,
+            'success_ci': 25,
+            'accepted_ci': 20,
+            'cv': 8
+        }
+        
+        total_width = sum(col_widths.values()) + len(col_widths) - 1
+        
+        print("\n" + "=" * total_width)
+        print("STATISTICAL ANALYSIS".center(total_width))
+        print("=" * total_width)
+        
+        # Headers
+        header_parts = [
+            f"{'Strategy':<{col_widths['strategy']}}",
+            f"{'Scenario':<{col_widths['scenario']}}",
+            f"{'Success Rate (95% CI)':<{col_widths['success_ci']}}",
+            f"{'Accepted (95% CI)':<{col_widths['accepted_ci']}}",
+            f"{'CV':<{col_widths['cv']}}"
+        ]
+        print(" ".join(header_parts))
+        print("-" * total_width)
         
         for metrics in metrics_list:
             ci_low, ci_high = metrics.acceptance_ci_95
             success_ci_low, success_ci_high = metrics.success_rate_ci_95
             cv = f"{metrics.std_accepted/metrics.avg_accepted:.2f}" if metrics.avg_accepted > 0 else "N/A"
             
-            print(f"{metrics.strategy_name:<20} "
-                  f"{metrics.scenario_name:<15} "
-                  f"{metrics.success_rate:.1%} [{success_ci_low:.1%}, {success_ci_high:.1%}]   "
-                  f"{metrics.avg_accepted:.0f} [{ci_low:.0f}, {ci_high:.0f}]    "
-                  f"{cv}")
+            strategy_str = f"{metrics.strategy_name:<{col_widths['strategy']}}"
+            scenario_str = f"{metrics.scenario_name:<{col_widths['scenario']}}"
+            success_ci_str = f"{metrics.success_rate:.1%} [{success_ci_low:.1%}, {success_ci_high:.1%}]"
+            success_ci_padded = f"{success_ci_str:<{col_widths['success_ci']}}"
+            accepted_ci_str = f"{metrics.avg_accepted:.0f} [{ci_low:.0f}, {ci_high:.0f}]"
+            accepted_ci_padded = f"{accepted_ci_str:<{col_widths['accepted_ci']}}"
+            cv_padded = f"{cv:<{col_widths['cv']}}"
+            
+            print(f"{strategy_str} {scenario_str} {success_ci_padded} {accepted_ci_padded} {cv_padded}")
         
-        print("-" * 80)
+        print("-" * total_width)
     
     def print_comprehensive_report(self, metrics_list: List[PerformanceMetrics]):
         """Print a comprehensive performance report."""

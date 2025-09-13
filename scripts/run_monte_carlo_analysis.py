@@ -25,12 +25,13 @@ from src.strategies.adaptive_lp_strategy import AdaptiveLPStrategy, AdaptiveLPCo
 from src.strategies.advanced_lp_strategies import (
     RobustOptimizationStrategy, RobustOptimizationConfig
 )
-from src.examples.hospital_icu.scenarios import create_icu_scenario_1, create_icu_scenario_2, create_icu_scenario_3
+from src.examples.hospital_icu.scenarios import create_icu_scenario_1, create_icu_scenario_2, create_icu_scenario_3, create_icu_scenario_4
 from src.core.strategy_base import AbstractStrategy, RandomStrategy
 from src.strategies.greedy_strategies import (
     GreedyStrategy, WeightedConstraintGreedy, AdaptiveThresholdGreedy,
     WeightedGreedyConfig, AdaptiveGreedyConfig
 )
+from src.strategies.dqn_strategy import DQNStrategy, DQNConfig, create_dqn_strategy
 
 
 class AnalysisType(Enum):
@@ -63,13 +64,13 @@ class StrategyFactory:
         ),
         "weighted_deficit": StrategyConfig(
             strategy_class=WeightedConstraintGreedy,
-            name="WeightedGreedy-Deficit",
+            name="WeightedGreedy-Def",
             config_class=WeightedGreedyConfig,
             config_params={"acceptance_threshold": 0.0, "weight_strategy": "deficit_proportional", "capacity_buffer": 0.0}
         ),
         "weighted_difficulty": StrategyConfig(
             strategy_class=WeightedConstraintGreedy,
-            name="WeightedGreedy-Difficulty",
+            name="WeightedGreedy-Diff",
             config_class=WeightedGreedyConfig,
             config_params={"acceptance_threshold": 0.0, "weight_strategy": "constraint_difficulty", "capacity_buffer": 0.0}
         ),
@@ -107,6 +108,15 @@ class StrategyFactory:
             name="RobustLP",
             config_class=RobustOptimizationConfig,
             config_params={"acceptance_threshold": 0.6, "uncertainty_budget": 0.1, "worst_case_scenarios": 3}
+        ),
+        
+        # Reinforcement Learning Strategies
+        "dqn_pretrained": StrategyConfig(
+            strategy_class=DQNStrategy,
+            name="DQN-ICU",
+            config_class=DQNConfig,
+            config_params={"model_path": "models/icu_dqn/dqn_standard_500000.zip"},
+            requires_scenario=True
         ),
         
         # Random baseline
@@ -157,7 +167,8 @@ class StrategyFactory:
                 "greedy",
                 "weighted_deficit", 
                 "lp_balanced",
-                "adaptive_lp"
+                "adaptive_lp",
+                "dqn_pretrained"
             ],
             AnalysisType.FULL: [
                 "greedy",
@@ -177,7 +188,8 @@ class StrategyFactory:
                 "lp_balanced",
                 "lp_conservative",
                 "adaptive_lp",
-                "robust_lp"
+                "robust_lp",
+                "dqn_pretrained"
             ]
         }
 
@@ -188,7 +200,8 @@ class ScenarioManager:
     SCENARIOS = {
         "standard": ("Standard", create_icu_scenario_1),
         "high_acuity": ("High-Acuity", create_icu_scenario_2), 
-        "emergency": ("Emergency", create_icu_scenario_3)
+        "emergency": ("Emergency", create_icu_scenario_3),
+        "negative_correlations": ("Negative-Correlations", create_icu_scenario_4)
     }
     
     @classmethod
@@ -326,7 +339,7 @@ Examples:
                        help="Number of simulation runs per strategy (default: 100)")
     parser.add_argument("--scenarios",
                        nargs="+",
-                       choices=["standard", "high_acuity", "emergency"],
+                       choices=["standard", "high_acuity", "emergency", "negative_correlations"],
                        help="Specific scenarios to analyze (default: all)")
     parser.add_argument("--save", 
                        action="store_true", 
