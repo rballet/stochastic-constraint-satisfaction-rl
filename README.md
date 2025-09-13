@@ -80,3 +80,4 @@ print(f"Success: {result.success}, Accepted: {result.accepted_count}")
 - **[Mathematical Foundation](docs/MATHEMATICAL_FOUNDATION.md)**: Core theory and problem formulation
 - **[Linear Programming Approach](docs/LINEAR_PROGRAMMING.md)**: LP-based solution methods and implementation
 - **[Greedy Approaches](docs/GREEDY_APPROACHES.md)**: Guide to greedy algorithms and optimizations
+- **[Reinforcement Learning Approaches](docs/REINFORCEMENT_LEARNING.md)**: RL-based solution methods with Deep Q-Networks
