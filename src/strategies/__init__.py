@@ -26,6 +26,13 @@ from .greedy_strategies import (
     WeightedGreedyConfig, AdaptiveGreedyConfig
 )
 
+from .dqn_strategy import (
+    DQNStrategy,
+    DQNConfig,
+    SCSPEnvironment,
+    create_dqn_strategy
+)
+
 __all__ = [
     # Greedy Strategies
     "GreedyStrategy",
@@ -45,6 +52,12 @@ __all__ = [
     # Adaptive LP Strategies (NEW - High Performance)
     "AdaptiveLPStrategy",
     "RollingHorizonLPStrategy",
+    
+    # RL Strategies
+    "DQNStrategy",
+    "DQNConfig",
+    "SCSPEnvironment", 
+    "create_dqn_strategy",
     
     # Configuration classes
     "WeightedGreedyConfig",
