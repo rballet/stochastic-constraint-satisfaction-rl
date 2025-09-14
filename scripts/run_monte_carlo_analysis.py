@@ -115,7 +115,7 @@ class StrategyFactory:
             strategy_class=DQNStrategy,
             name="DQN-ICU",
             config_class=DQNConfig,
-            config_params={"model_path": "models/icu_dqn/dqn_standard_500000.zip"},
+            config_params={"model_path": "models/icu_dqn/dqn_standard_5000000.zip"},
             requires_scenario=True
         ),
         

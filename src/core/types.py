@@ -49,6 +49,7 @@ class Scenario:
     capacity: int
     max_rejections: int
     attribute_correlations: Dict[tuple, float] = field(default_factory=dict)
+    category: str = "DEFAULT"
     description: str = ""
 
 

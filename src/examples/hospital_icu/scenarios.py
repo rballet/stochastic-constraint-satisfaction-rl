@@ -19,6 +19,7 @@ def create_icu_scenario_1() -> Scenario:
     """
     return Scenario(
         name="icu_standard",
+        category="ICU",
         description="Standard ICU operating conditions",
         attributes=["critical_condition", "elderly", "has_insurance", "high_risk", "emergency_case"],
         capacity=ICU_CAPACITY,
@@ -65,6 +66,7 @@ def create_icu_scenario_2() -> Scenario:
     """
     return Scenario(
         name="icu_high_acuity",
+        category="ICU",
         description="High-acuity period (flu season/health crisis)",
         attributes=["critical_condition", "elderly", "has_insurance", "high_risk", "emergency_case"],
         capacity=ICU_CAPACITY,
@@ -112,6 +114,7 @@ def create_icu_scenario_3() -> Scenario:
     """
     return Scenario(
         name="icu_emergency_surge",
+        category="ICU",
         description="Emergency surge conditions (disaster/epidemic)",
         attributes=["critical_condition", "elderly", "has_insurance", "high_risk", "emergency_case"],
         capacity=ICU_CAPACITY,
@@ -164,6 +167,7 @@ def create_icu_scenario_4() -> Scenario:
     """
     return Scenario(
         name="icu_negative_correlations",
+        category="ICU",
         description="Challenging scenario with strong negative correlations",
         attributes=["critical_condition", "elderly", "has_insurance", "high_risk", "emergency_case"],
         capacity=ICU_CAPACITY,

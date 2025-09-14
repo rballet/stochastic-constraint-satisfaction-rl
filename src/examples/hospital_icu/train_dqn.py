@@ -159,7 +159,7 @@ class ICUDQNTrainer:
         
         if curriculum_ratios is None:
             # Default: start with easier scenarios, progress to harder ones
-            curriculum_ratios = [0.4, 0.3, 0.2, 0.1]  # Adjust based on scenario difficulty
+            curriculum_ratios = [0.1, 0.15, 0.25, 0.5]  # Adjust based on scenario difficulty
         
         if len(curriculum_ratios) != len(scenario_keys):
             curriculum_ratios = [1.0 / len(scenario_keys)] * len(scenario_keys)
@@ -213,7 +213,22 @@ class ICUDQNTrainer:
         # Store the final model with just the target scenario name
         target_scenario_key = scenario_keys[-1]
         self.trained_models[target_scenario_key] = strategy
-        
+
+        # Save the final curriculum-trained model
+        model_path = self.output_dir / f"dqn_curriculum_{target_scenario.category}_{config.total_timesteps}.zip"
+        strategy.save_model(str(model_path))
+        print(f"📁 Curriculum model saved: {model_path}")
+
+        # Save configuration with curriculum information
+        config_path = self.output_dir / f"config_curriculum_{target_scenario.category}_{config.total_timesteps}.json"
+        with open(config_path, 'w') as f:
+            config_dict = asdict(config)
+            config_dict['scenario'] = target_scenario_key
+            config_dict['curriculum_scenarios'] = scenario_keys
+            config_dict['curriculum_ratios'] = curriculum_ratios
+            config_dict['training_method'] = 'curriculum'
+            json.dump(config_dict, f, indent=2)
+
         print(f"\n🎯 Curriculum training completed. Final model ready for {target_scenario_key}")
         return strategy
     
@@ -481,6 +496,7 @@ def main():
     if args.curriculum and len(scenarios_to_train) > 1:
         # Use curriculum learning for multiple scenarios
         print("🎓 Using curriculum learning approach...")
+
         # Order scenarios from easiest to hardest: standard -> high_acuity -> emergency
         curriculum_order = ['standard', 'high_acuity', 'emergency', 'negative_correlations']
         curriculum_scenarios = [s for s in curriculum_order if s in scenarios_to_train]
